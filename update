@@ -1,0 +1,42 @@
+#! /bin/bash
+#
+# Update all shared files in other projects.
+
+FILES=(comm.mk .clang-format)
+
+BASE="$COMMAKE_BASE"
+if [ -n "$1" ]; then
+	BASE="$1"
+fi
+
+if [ -z "$BASE" ]; then
+	echo "Usage: $0 <BASE>"
+	echo "Alternatively, the env var COMMAKE_BASE may be used"
+	exit 1
+fi
+
+for f in ${FILES[@]}; do
+	lfile=$(readlink -f $f)
+	ups=$(find "$BASE" -name "$f")
+
+	for up in $ups; do
+		rfile="$(readlink -f $up)"
+		if [ "$rfile" == "$lfile" ]; then
+			continue
+		fi
+
+		if [ $(grep -c "This file is part of commake." $up) -gt 0 ]; then
+			cp $f $up;
+
+			cd "$(dirname $up)"
+
+			git diff --quiet "$f"
+			if [ $? -ne 0 ]; then
+				git add "$f"
+				echo "Updated $rfile"
+			fi
+
+			cd - > /dev/null
+		fi
+	done
+done
