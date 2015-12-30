@@ -37,10 +37,16 @@ ifeq ($(OS),Darwin)
 	export OS_OSX = 1
 endif
 
+ifndef NAME
+$(error NAME must be set)
+endif
+
 SO = $(NAME).so
+PC = $(NAME).pc
 SONAME = $(SO).$(SOVERSION)
 A = $(NAME).a
 TEST_BIN = $(NAME).test
+VMAP = $(NAME).v
 
 #
 # Install directories
@@ -71,6 +77,11 @@ INSTALL =
 CLANG_FORMAT = true
 ifneq (,$(shell which clang-format))
 	CLANG_FORMAT = clang-format
+endif
+
+GCOVR = true
+ifneq (,$(shell which gcovr))
+	GCOVR = gcovr
 endif
 
 VALGRIND_SUPP = valgrind.supp
@@ -180,8 +191,12 @@ LDFLAGS_TEST = \
 
 # For linking shared objects
 LDFLAGS_SO = \
-	$(LDFLAGS_BASE) \
-	-Wl,--version-script=$(NAME).v
+	$(LDFLAGS_BASE)
+
+ifneq (,$(wildcard $(VMAP)))
+	LDFLAGS_SO += \
+		-Wl,--version-script=$(VMAP)
+endif
 
 ifdef OS_LINUX
 	LDFLAGS_SO += \
@@ -245,14 +260,14 @@ DEP_INCS += \
 # ============================================================
 #
 
-_all: all
+all::
 
 bench: $(TEST_BIN)
 	PTBENCH=1 ./$(TEST_BIN)
 
-test: $(TEST_BIN)
+test:: $(TEST_BIN)
 	./$(TEST_BIN)
-	gcovr \
+	@$(GCOVR) \
 		--root=$(SRC_DIR)/ \
 		--exclude=.*_test.* \
 		$(GCOVR_ARGS)
@@ -260,7 +275,7 @@ test: $(TEST_BIN)
 test-valgrind: $(TEST_BIN)
 	PTNOFORK=1 $(VALGRIND) ./$(TEST_BIN)
 
-_clean:
+clean::
 	@rm -f $(SONAME) $(A)
 	@rm -f $(TEST_BIN)
 	@rm -f $(OBJECTS)
@@ -309,7 +324,7 @@ $(SONAME): $(BOBJECTS)
 
 %.o: %.c | _format
 	@echo '--- CC $@'
-	@$(CC) -c $(CLAGS) -MF $*.d $(abspath $<) -o $@
+	@$(CC) -c $(CFLAGS) -MF $*.d $(abspath $<) -o $@
 
 %.o: %.cc | _format
 %.o: %.cpp | _format
@@ -317,7 +332,7 @@ $(SONAME): $(BOBJECTS)
 	@$(CXX) -c $(CXXFLAGS) -MF $*.d $(abspath $<) -o $@
 
 %.to: %.c | _format
-	@echo '--- CXX $@'
+	@echo '--- CC $@'
 	@rm -f $*.gcda $*.gcno
 	@$(CC) -c $(CFLAGS_TEST) -MF $*.td $(abspath $<) -o $@
 
