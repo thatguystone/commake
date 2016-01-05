@@ -324,23 +324,23 @@ $(SONAME): $(BOBJECTS)
 
 %.o: %.c | _format
 	@echo '--- CC $@'
-	@$(CC) -c $(CFLAGS) -MF $*.d $(abspath $<) -o $@
+	@$(CC) -c $(CFLAGS) -MF $*.d $< -o $@
 
 %.o: %.cc | _format
 %.o: %.cpp | _format
 	@echo '--- CXX $@'
-	@$(CXX) -c $(CXXFLAGS) -MF $*.d $(abspath $<) -o $@
+	@$(CXX) -c $(CXXFLAGS) -MF $*.d $< -o $@
 
 %.to: %.c | _format
 	@echo '--- CC $@'
 	@rm -f $*.gcda $*.gcno
-	@$(CC) -c $(CFLAGS_TEST) -MF $*.td $(abspath $<) -o $@
+	@$(CC) -c $(CFLAGS_TEST) -MF $*.td $< -o $@
 
 %.to: %.cc | _format
 %.to: %.cpp | _format
 	@echo '--- CXX $@'
 	@rm -f $*.gcda $*.gcno
-	@$(CXX) -c $(CXXFLAGS_TEST) -MF $*.td $(abspath $<) -o $@
+	@$(CXX) -c $(CXXFLAGS_TEST) -MF $*.td $< -o $@
 
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 -include $(DEP_INCS)
