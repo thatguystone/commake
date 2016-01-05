@@ -308,6 +308,7 @@ test-valgrind: $(TEST_BIN)
 	PTNOFORK=1 $(VALGRIND) ./$(TEST_BIN)
 
 clean::
+	@rm -f $(PC)
 	@rm -f $(SONAME) $(A)
 	@rm -f $(TEST_BIN)
 	@rm -f $(OBJECTS)
