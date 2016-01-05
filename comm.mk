@@ -142,7 +142,6 @@ CFLAGS_ALL += \
 	-fPIC \
 	-Wall \
 	-Wcast-qual \
-	-Wconversion \
 	-Wdisabled-optimization \
 	-Werror \
 	-Wextra \
