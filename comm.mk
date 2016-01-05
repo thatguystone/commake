@@ -74,7 +74,32 @@ BIN_DIR = $(DESTDIR)$(_BIN_DIR)
 # ============================================================
 #
 
-INSTALL =
+define INST
+	@echo INST $(1) $(2)
+	@install -m 0644 $(1) $(2)
+endef
+
+define INST_BIN
+	@echo INST_BIN $(1) $(2)
+	@mkdir -p $(1)
+	@install -m 0755 $(1) $(2)
+endef
+
+define INST_INTO
+	@echo INST_INTO $(1) $(2)
+	@mkdir -p $(1)
+	@install -m 0644 -t $(1) $(2)
+endef
+
+define LN
+	@echo LN $(1) $(2)
+	@ln -s $(1) $(2)
+endef
+
+define UNINST
+	@echo UNINST $(1)
+	@rm -rf $(1)
+endef
 
 CLANG_FORMAT = true
 ifneq (,$(shell which clang-format))
