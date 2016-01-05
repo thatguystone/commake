@@ -112,7 +112,7 @@ VALGRIND = \
 # ============================================================
 #
 
-_CFLAGS = \
+CFLAGS_ALL += \
 	-g \
 	-fPIC \
 	-Wall \
@@ -136,23 +136,23 @@ _CFLAGS = \
 	-I$(SRC_DIR)/
 
 # For both CFLAGS_TEST and CXXFLAGS_TEST
-CFLAGS_TEST_BASE = \
+CFLAGS_TEST_BASE += \
 	-O0 \
 	--coverage \
 	-fno-inline \
 	-DTESTING
 
 # Use for both CFLAGS and CFLAGS_TEST
-CFLAGS_BASE = \
-	$(_CFLAGS) \
+CFLAGS_BASE += \
+	$(CFLAGS_ALL) \
 	-std=gnu11 \
 	-Wdeclaration-after-statement \
 	-Wmissing-prototypes \
 	-Wstrict-prototypes
 
 # Use for both CXXFLAGS and CXXFLAGS_TEST
-CXXFLAGS_BASE = \
-	$(_CFLAGS) \
+CXXFLAGS_BASE += \
+	$(CFLAGS_ALL) \
 	-Wnon-virtual-dtor \
 	-std=gnu++11
 
@@ -162,7 +162,7 @@ CFLAGS = \
 	-O3
 
 # For building test binaries
-CFLAGS_TEST = \
+CFLAGS_TEST += \
 	$(CFLAGS_BASE) \
 	$(CFLAGS_TEST_BASE)
 
@@ -172,27 +172,27 @@ CXXFLAGS = \
 	-O3
 
 # For building test binaries
-CXXFLAGS_TEST = \
+CXXFLAGS_TEST += \
 	$(CXXFLAGS_BASE) \
 	$(CFLAGS_TEST_BASE)
 
 # For every build
-LDFLAGS_BASE = \
+LDFLAGS_BASE += \
 	-rdynamic \
 	-pthread
 
 # For linking binaries
-LDFLAGS = \
+LDFLAGS += \
 	$(LDFLAGS_BASE) \
 	-pie
 
 # For linking tests
-LDFLAGS_TEST = \
+LDFLAGS_TEST += \
 	$(LDFLAGS) \
 	--coverage
 
 # For linking shared objects
-LDFLAGS_SO = \
+LDFLAGS_SO += \
 	$(LDFLAGS_BASE)
 
 ifneq (,$(wildcard $(VMAP)))
@@ -229,7 +229,7 @@ endif
 
 # The following flags only work with GNU's ld
 ifneq (,$(findstring GNU ld,$(shell ld -v 2>&1)))
-	LDFLAGS += \
+	LDFLAGS_BASE += \
 		-fuse-ld=gold \
 		-Wl,-z,now \
 		-Wl,-z,relro
