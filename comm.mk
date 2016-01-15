@@ -250,7 +250,7 @@ ifneq (,$(PKG_CFG_LIBS))
 	CXXFLAGS_BASE += \
 		$$(pkg-config --cflags $(PKG_CFG_LIBS))
 
-	LDFLAGS += \
+	LDFLAGS_BASE += \
 		$$(pkg-config --libs $(PKG_CFG_LIBS))
 endif
 
