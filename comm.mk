@@ -91,6 +91,15 @@ define INST_INTO
 	@install -m 0644 -t $(1) $(2)
 endef
 
+define INST_RECUR
+	echo INST_RECUR $(1) $(2); \
+	for f in $(2); do \
+		target="$(1)/$$(dirname $$f)"; \
+		mkdir -p $$target; \
+		install -m 0644 -t $$target $$f; \
+	done
+endef
+
 define LN
 	@echo LN $(1) $(2)
 	@ln --relative -s $(1) $(2)
