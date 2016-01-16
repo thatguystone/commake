@@ -11,15 +11,6 @@ MAKEFLAGS += --no-print-directory --no-builtin-rules
 # More disabling implicit rules (seems to help for older versions of make)
 .SUFFIXES:
 
-LLVM ?= llvm
-ifeq ($(LLVM),llvm)
-	CC = clang
-	CXX = clang++
-	export GCOV = llvm-cov
-else
-	override undefine GCOV
-endif
-
 #
 # Useful variables
 #
@@ -40,6 +31,30 @@ endif
 
 ifeq ($(OS),Darwin)
 	export OS_OSX = 1
+endif
+
+ifdef CI
+	AUTO_BUILDER = 1
+endif
+
+# This is a bit janky...
+ifeq ($(HOME),/sbuild-nonexistent)
+	AUTO_BUILDER = 1
+endif
+
+# Only attempt to switch to clang when not running in an autobuild env: these
+# environments typically rely on being able to manipulate standard variables,
+# so don't mess with them.
+ifndef AUTO_BUILDER
+	LLVM ?= llvm
+
+	ifeq ($(LLVM),llvm)
+		CC = clang
+		CXX = clang++
+		export GCOV = llvm-cov
+	else
+		override undefine GCOV
+	endif
 endif
 
 ifndef NAME
