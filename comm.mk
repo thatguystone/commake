@@ -4,9 +4,12 @@
 # https://github.com/thatguystone/commake
 
 #
-# Hide annoying messages
+# Make make a bit nicer to work with
 #
 MAKEFLAGS += --no-print-directory --no-builtin-rules
+
+# More disabling implicit rules (seems to help for older versions of make)
+.SUFFIXES:
 
 LLVM ?= llvm
 ifeq ($(LLVM),llvm)
