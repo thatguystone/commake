@@ -245,24 +245,24 @@ endif
 
 ifneq (,$(PKG_CFG_LIBS))
 	CFLAGS_BASE += \
-		$$(pkg-config --cflags $(PKG_CFG_LIBS))
+		$(shell pkg-config --cflags $(PKG_CFG_LIBS))
 
 	CXXFLAGS_BASE += \
-		$$(pkg-config --cflags $(PKG_CFG_LIBS))
+		$(shell pkg-config --cflags $(PKG_CFG_LIBS))
 
 	LDFLAGS_BASE += \
-		$$(pkg-config --libs $(PKG_CFG_LIBS))
+		$(shell pkg-config --libs $(PKG_CFG_LIBS))
 endif
 
 ifneq (,$(PKG_CFG_TEST_LIBS))
 	CFLAGS_TEST += \
-		$$(pkg-config --cflags $(PKG_CFG_TEST_LIBS))
+		$(shell pkg-config --cflags $(PKG_CFG_TEST_LIBS))
 
 	CXXFLAGS_TEST += \
-		$$(pkg-config --cflags $(PKG_CFG_TEST_LIBS))
+		$(shell pkg-config --cflags $(PKG_CFG_TEST_LIBS))
 
 	LDFLAGS_TEST += \
-		$$(pkg-config --libs $(PKG_CFG_TEST_LIBS))
+		$(shell pkg-config --libs $(PKG_CFG_TEST_LIBS))
 endif
 
 # The following flags only work with GNU's ld
