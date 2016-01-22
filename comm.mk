@@ -74,17 +74,23 @@ VMAP = $(NAME).v
 # ============================================================
 #
 
-_PREFIX = /usr
-_LIB_DIR = $(_PREFIX)/lib/$(DEB_HOST_MULTIARCH)
-_BIN_DIR = $(_PREFIX)/bin
-_PKGCFG_DIR = $(_LIB_DIR)/pkgconfig
-_INCLUDE_DIR = $(_PREFIX)/include
+_MAN_LVLS = 1 2 3 4 5 6 7 8
 
-PREFIX = $(abspath $(DESTDIR)$(_PREFIX))
+_PREFIX = /usr
+_BIN_DIR = $(_PREFIX)/bin
+_INCLUDE_DIR = $(_PREFIX)/include
+_LIB_DIR = $(_PREFIX)/lib/$(DEB_HOST_MULTIARCH)
+_MAN_DIR = $(_PREFIX)/share/man/man
+_PKGCFG_DIR = $(_LIB_DIR)/pkgconfig
+
+BIN_DIR = $(abspath $(DESTDIR)$(_BIN_DIR))
+INCLUDE_DIR = $(abspath $(DESTDIR)$(_INCLUDE_DIR))
 LIB_DIR = $(abspath $(DESTDIR)$(_LIB_DIR))
 PKGCFG_DIR = $(abspath $(DESTDIR)$(_PKGCFG_DIR))
-INCLUDE_DIR = $(abspath $(DESTDIR)$(_INCLUDE_DIR))
-BIN_DIR = $(abspath $(DESTDIR)$(_BIN_DIR))
+PREFIX = $(abspath $(DESTDIR)$(_PREFIX))
+
+$(foreach LVL, $(_MAN_LVLS), \
+	$(eval override MAN$(LVL)_DIR = $(abspath $(DESTDIR)$(_MAN_DIR)$(LVL))))
 
 #
 # Commands
