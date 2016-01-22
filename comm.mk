@@ -234,6 +234,7 @@ CXXFLAGS_TEST += \
 
 # For every build
 LDFLAGS_BASE += \
+	$(LDFLAGS) \
 	-rdynamic \
 	-pthread
 
