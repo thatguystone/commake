@@ -68,6 +68,10 @@ A = $(NAME).a
 TEST_BIN = $(NAME).test
 VMAP = $(NAME).v
 
+ifdef TEST_SO
+	TEST_SO = $(NAME)_test.so
+endif
+
 #
 # Install directories
 #
@@ -250,14 +254,22 @@ LDFLAGS_BIN += \
 	$(LDFLAGS_BASE) \
 	-pie
 
+LDFLAGS_TEST_BASE += \
+	--coverage
+
 # For linking tests
 LDFLAGS_TEST += \
 	$(LDFLAGS_BIN) \
-	--coverage
+	$(LDFLAGS_TEST_BASE)
 
 # For linking shared objects
 LDFLAGS_SO += \
 	$(LDFLAGS_BASE)
+
+# For linking shared objects for testing
+LDFLAGS_SO_TEST += \
+	$(LDFLAGS_SO) \
+	$(LDFLAGS_TEST_BASE)
 
 ifneq (,$(wildcard $(VMAP)))
 	LDFLAGS_SO += \
@@ -287,7 +299,7 @@ ifneq (,$(PKG_CFG_TEST_LIBS))
 	CXXFLAGS_TEST += \
 		$(shell pkg-config --cflags $(PKG_CFG_TEST_LIBS))
 
-	LDFLAGS_TEST += \
+	LDFLAGS_TEST_BASE += \
 		$(shell pkg-config --libs $(PKG_CFG_TEST_LIBS))
 endif
 
@@ -328,6 +340,9 @@ DEP_INCS += \
 
 all::
 
+ifdef TEST_SO
+test:: $(TEST_SO)
+else
 bench: $(TEST_BIN)
 	PTBENCH=1 ./$(TEST_BIN)
 
@@ -341,11 +356,12 @@ test:: $(TEST_BIN)
 
 test-valgrind: $(TEST_BIN)
 	PTNOFORK=1 $(VALGRIND) ./$(TEST_BIN)
+endif
 
 clean::
 	@rm -f $(PC)
 	@rm -f $(SONAME) $(A)
-	@rm -f $(TEST_BIN)
+	@rm -f $(TEST_BIN) $(TEST_SO)
 	@rm -f $(OBJECTS)
 	@rm -f $(OBJECTS:.o=.d)
 	@rm -f $(OBJECTS:.o=.gcno)
@@ -381,6 +397,10 @@ _format:
 $(TEST_BIN): $(TOBJECTS)
 	@echo '--- LD $@'
 	@$(CXX) -o $@ $^ $(LDFLAGS_TEST)
+
+$(TEST_SO): $(TOBJECTS)
+	@echo '--- LD $@'
+	@$(CXX) -shared -o $@ $^ $(LDFLAGS_SO_TEST)
 
 $(A): $(BOBJECTS)
 	@echo '--- AR $@'

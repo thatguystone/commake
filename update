@@ -16,19 +16,19 @@ if [ -z "$BASE" ]; then
 fi
 
 for f in ${FILES[@]}; do
-	lfile=$(readlink -f $f)
+	lfile=$(readlink -f "$f")
 	ups=$(find "$BASE" -name "$f")
 
 	for up in $ups; do
-		rfile="$(readlink -f $up)"
+		rfile="$(readlink -f "$up")"
 		if [ "$rfile" == "$lfile" ]; then
 			continue
 		fi
 
-		if [ $(grep -c "This file is part of commake." $up) -gt 0 ]; then
-			cp $f $up;
+		if [ $(grep -c "This file is part of commake." "$up") -gt 0 ]; then
+			cp "$f" "$up"
 
-			cd "$(dirname $up)"
+			cd "$(dirname "$up")"
 
 			git diff --quiet "$f"
 			if [ $? -ne 0 ]; then
